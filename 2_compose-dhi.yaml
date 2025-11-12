@@ -1,3 +1,4 @@
+# 2. Docker compose with dhi and .env password
 services:
   server:
     build:
@@ -22,8 +23,7 @@ services:
       - db-data:/var/lib/postgresql
     environment:
       - POSTGRES_DB=example
-    entrypoint: sh -c "export POSTGRES_PASSWORD=$(cat /run/secrets/db-password) && exec docker-entrypoint.sh"
-    command: postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
     expose:
       - 5432
     healthcheck:
