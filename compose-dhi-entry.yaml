@@ -1,0 +1,39 @@
+services:
+  server:
+    build:
+      context: .
+    environment:
+      NODE_ENV: production
+    ports:
+      - 5001:5000
+    depends_on:
+      db:
+        condition: service_healthy
+    secrets:
+      - db-password
+
+  db:
+    image: docker/dhi-postgres:18
+    restart: always
+    user: postgres
+    secrets:
+      - db-password
+    volumes:
+      - db-data:/var/lib/postgresql
+    environment:
+      - POSTGRES_DB=example
+    entrypoint: sh -c "export POSTGRES_PASSWORD=$(cat /run/secrets/db-password) && exec docker-entrypoint.sh"
+    command: postgres
+    expose:
+      - 5432
+    healthcheck:
+      test: [ "CMD", "pg_isready" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+volumes:
+  db-data:
+secrets:
+  db-password:
+    file: db/password.txt
+
