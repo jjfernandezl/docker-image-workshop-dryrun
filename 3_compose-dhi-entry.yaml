@@ -14,15 +14,16 @@ services:
       - db-password
 
   db:
-    image: docker/dhi-postgres:18
+    image: docker/dhi-postgres:18-dev
     restart: always
-    user: postgres
+    user: "postgres"
     secrets:
       - db-password
     volumes:
       - db-data:/var/lib/postgresql
     environment:
       - POSTGRES_DB=example
+      - PGDATA=/var/lib/postgresql/18/data
     entrypoint: sh -c "export POSTGRES_PASSWORD=$(cat /run/secrets/db-password) && exec docker-entrypoint.sh"
     command: postgres
     expose:
